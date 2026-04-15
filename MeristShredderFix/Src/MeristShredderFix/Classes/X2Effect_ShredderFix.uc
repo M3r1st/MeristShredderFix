@@ -83,7 +83,7 @@ private static function bool IsValidWeaponCategory(name WeaponTech)
 
 private static function bool IsValidSlot(EInventorySlot Slot)
 {
-    return default.bApplyToAnySlot || Slot == eInvSlot_PrimaryWeapon;
+    return default.bApplyToAnySlot || default.ValidInventorySlots.Find(Slot) != INDEX_NONE;
 }
 
 private static function int GetShredderValue(name WeaponTech)
