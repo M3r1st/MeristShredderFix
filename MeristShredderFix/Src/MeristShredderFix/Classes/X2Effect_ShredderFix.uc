@@ -35,7 +35,7 @@ function int GetExtraShredValue(XComGameState_Effect EffectState, XComGameState_
                 if (WeaponTemplate != none)
                 {
                     // This is a Shredder effect; apply only the tech level fix
-                    if (X2Effect_Shredder(DamageEffect) != none)
+                    if (IsShredderEffect(DamageEffect))
                     {
                         // Check if the effect has shred
                         DamageValue = DamageEffect.GetBonusEffectDamageValue(AbilityState, Attacker, SourceWeapon, AppliedData.TargetStateObjectRef);
@@ -94,8 +94,13 @@ private static function bool IsValidSlot(EInventorySlot Slot)
 private static function bool IsValidEffectClass(X2Effect Effect)
 {
     return default.bApplyPrimaryFixToAnyEffectClass
-        || Effect.IsA('X2Effect_ApplyWeaponDamage')
+        || Effect.Class == class'X2Effect_ApplyWeaponDamage'
         || default.ValidEffectClasses.Find(Effect.Class.Name) != INDEX_NONE;
+}
+
+private static function bool IsShredderEffect(X2Effect Effect)
+{
+    return X2Effect_Shredder(Effect) != none;
 }
 
 
