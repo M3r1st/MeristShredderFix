@@ -12,6 +12,8 @@ var config array<name>              InvalidWeaponCategories;
 var config bool                     bApplyToAnySlot;
 var config array<EInventorySlot>    ValidInventorySlots;
 var config array<BonusShred>        ShredderPerWeaponTech;
+var config bool                     bApplyPrimaryFixToAnyEffectClass;
+var config array<name>              ValidEffectClasses;
 
 function int GetExtraShredValue(XComGameState_Effect EffectState, XComGameState_Unit Attacker, Damageable TargetDamageable, XComGameState_Ability AbilityState, const out EffectAppliedData AppliedData) 
 {
@@ -48,18 +50,21 @@ function int GetExtraShredValue(XComGameState_Effect EffectState, XComGameState_
                     }
                     else // This is not a Shredder effect; check if the "primary Shredder" fix needs to be applied
                     {
-                        // Only apply the fix if the slot and the weapon category are valid
-                        if (IsValidSlot(SourceWeapon.InventorySlot) && IsValidWeaponCategory(SourceWeapon.GetWeaponCategory()))
+                        if (IsValidEffectClass(DamageEffect))
                         {
-                            Index = default.ShredderPerWeaponTech.Find('WeaponTech', WeaponTemplate.WeaponTech);
-                            // If the value is configured, use it
-                            if (Index != INDEX_NONE)
+                            // Only apply the fix if the slot and the weapon category are valid
+                            if (IsValidSlot(SourceWeapon.InventorySlot) && IsValidWeaponCategory(SourceWeapon.GetWeaponCategory()))
                             {
-                                return default.ShredderPerWeaponTech[Index].Shred;
-                            }
-                            else // If the value is not configured, use the default Shredder value
-                            {
-                                return GetShredderValue(WeaponTemplate.WeaponTech);
+                                Index = default.ShredderPerWeaponTech.Find('WeaponTech', WeaponTemplate.WeaponTech);
+                                // If the value is configured, use it
+                                if (Index != INDEX_NONE)
+                                {
+                                    return default.ShredderPerWeaponTech[Index].Shred;
+                                }
+                                else // If the value is not configured, use the default Shredder value
+                                {
+                                    return GetShredderValue(WeaponTemplate.WeaponTech);
+                                }
                             }
                         }
                     }
@@ -85,6 +90,14 @@ private static function bool IsValidSlot(EInventorySlot Slot)
 {
     return default.bApplyToAnySlot || default.ValidInventorySlots.Find(Slot) != INDEX_NONE;
 }
+
+private static function bool IsValidEffectClass(X2Effect Effect)
+{
+    return default.bApplyPrimaryFixToAnyEffectClass
+        || Effect.IsA('X2Effect_ApplyWeaponDamage')
+        || default.ValidEffectClasses.Find(Effect.Class.Name) != INDEX_NONE;
+}
+
 
 private static function int GetShredderValue(name WeaponTech)
 {
