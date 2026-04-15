@@ -21,7 +21,7 @@ function int GetExtraShredValue(XComGameState_Effect EffectState, XComGameState_
     local X2WeaponTemplate              WeaponTemplate;
     local int                           Index;
 
-    if (Attacker.HasSoldierAbility('Shredder'))
+    if (Attacker.HasSoldierAbility('Shredder') && XComGameState_Unit(TargetDamageable) != none)
     {
         DamageEffect = X2Effect_ApplyWeaponDamage(GetX2Effect(AppliedData.EffectRef));
         if (DamageEffect != none && DamageEffect.bApplyOnHit)
@@ -105,6 +105,6 @@ private static function int GetShredderValue(name WeaponTech)
 
 defaultproperties
 {
-    EffectName = "M31_ShredderFixed"
+    EffectName = "M31_ShredderFix"
     DuplicateResponse = eDupe_Ignore
 }
